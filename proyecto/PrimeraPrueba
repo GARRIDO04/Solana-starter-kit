@@ -7,42 +7,42 @@ pub mod playlist {
 
     pub fn crear_playlist(context: Context<NuevaPlaylist>, nombre: String) -> Result<()> {
         let owner = context.accounts.owner.key();
-        let cancion: Vec<Cancion> = Vec::new();
+        let canciones: Vec<Cancion> = Vec::new();
 
         context.accounts.playlist.set_inner(Playlist {
             owner,
             nombre,
-            cancion,
+            canciones,
         });
 
         Ok(())
     }
 
-    pub fn agregar_libro(context: Context<NuevoLibro>, nombre: String, paginas: u16) -> Result<()> {
-        let libro = Libro {
+    pub fn agregar_cancion(context: Context<Cancion>, nombre: String, artista: String) -> Result<()> {
+        let cancion = Cancion {
             nombre,
-            paginas,
+            artista,
             disponible: true,
         };
 
-        context.accounts.biblioteca.libros.push(libro);
+        context.accounts.playlist.canciones.push(cancion);
 
         Ok(())
     }
 
-    pub fn ver_libros(context: Context<NuevoLibro>) -> Result<()> {
+    pub fn ver_playlist(context: Context<VerPlaylist>) -> Result<()> {
         msg!(
-            "La lista de libros es: {:#?}",
-            context.accounts.biblioteca.libros
+            "La playlist es: {:#?}",
+            context.accounts.playlist.canciones
         );
 
         Ok(())
     }
 
-    pub fn eliminar_libro(context: Context<NuevoLibro>, nombre: String) -> Result<()> {
+    pub fn eliminar_cancion(context: Context<NuevoLibro>, nombre: String) -> Result<()> {
         let libros = &mut context.accounts.biblioteca.libros;
 
-        for libro in 0..libros.len() {
+        for playlist in 0..canciones.len() {
             if libros[libro].nombre == nombre {
                 libros.remove(libro);
                 msg!("Libro {nombre} eliminado!");
@@ -50,7 +50,7 @@ pub mod playlist {
             }
         }
 
-        Err(Errores::LibroNoExiste.into())
+        Err(Errores::CancionNoExiste.into())
     }
 
     pub fn alternar_estado(context: Context<NuevoLibro>, nombre: String) -> Result<()> {
@@ -94,7 +94,7 @@ pub struct Playlist {
     nombre: String,
 
     #[max_len(10)]
-    cancion: Vec<Cancion>,
+    canciones: Vec<Cancion>,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, InitSpace, PartialEq, Debug)]
@@ -119,13 +119,13 @@ pub struct NuevaPlaylist<'info> {
         seeds = [b"playlist", owner.key().as_ref()],
         bump
     )]
-    pub biblioteca: Account<'info, Biblioteca>,///<--------
+    pub playlist: Account<'info, Playlist>,
 
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
-pub struct NuevaPlaylist<'info> {
+pub struct VerPlaylist<'info> {
     pub owner: Signer<'info>,
 
     #[account(mut)]
