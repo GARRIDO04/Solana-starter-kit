@@ -16,16 +16,35 @@ pub mod playlist {
         let playlist = &mut context.accounts.playlist;
 
         // Validamos que el firmante sea el owner
-        require!(
-            playlist.owner == context.accounts.owner.key(),
-            ProgramError::IllegalOwner
-        );
+        //require!(playlist.owner == context.accounts.owner.key(),
+        // ProgramError::IllegalOwner);
 
         playlist.canciones.push(cancion);
 
         Ok(())
         }
-    }
+
+    pub fn ver_playlist(context: Context<VerPlaylist>) -> Result<()>{
+        let playlist = &context.accounts.playlist;
+
+        msg!("--- PLAYLIST ---");
+        
+        msg!("Nombre: {}", playlist.nombre);
+
+        msg!("Total canciones: {}", playlist.canciones.len());
+        for (i, c) in playlist.canciones.iter().enumerate() {
+            msg!(
+                "#{} | {} - {} | disponible: {}",
+                i + 1,
+                c.nombre,
+                c.artista,
+                c.disponible
+            );
+        }
+        Ok(())
+        }
+
+}
 
 #[derive(InitSpace)]
 #[account]
@@ -75,3 +94,7 @@ pub struct AgregarCancion<'info> {
     pub owner: Signer<'info>,
 }
 
+#[derive(Accounts)]
+pub struct VerPlaylist<'info>{
+    pub playlist: Account<'info, Playlist>,
+}
