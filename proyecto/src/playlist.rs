@@ -69,7 +69,7 @@ pub struct CrearPlaylist<'info> {
 
 #[derive(Accounts)]
 pub struct AgregarCancion<'info> {
-    #[account(mut, has_one = owner)]
+    #[account(mut)]
     pub playlist: Account<'info, Playlist>,
 
     pub owner: Signer<'info>,
