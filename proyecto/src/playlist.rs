@@ -15,7 +15,7 @@ pub mod playlist {
     pub fn agregar_cancion(context: Context<AgregarCancion>, cancion: Cancion) -> Result<()> {
         let playlist = &mut context.accounts.playlist;
 
-        // Validamos que el firmante sea el owner
+        //No termine de comprender como funcinaba la validacion
         //require!(playlist.owner == context.accounts.owner.key(),
         // ProgramError::IllegalOwner);
 
